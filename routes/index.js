@@ -1,10 +1,10 @@
 import express from "express";
 const router = express.Router();
 import usersRoutes from "./users.routes.js";
-// import tweetsRoutes from "./tweets.routes.js";
+import ridesRoutes from "./rides.routes.js";
 
 router.use("/users", usersRoutes);
 
-// router.use("/tweets", tweetsRoutes);
+router.use("/rides", ridesRoutes);
 
 export { router };

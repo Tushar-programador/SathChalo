@@ -1,21 +1,43 @@
-import { Router } from 'express';
-const router = Router();
 import { registerUser, loginUser,getUserProfile , updateUserProfile } from '../controllers/auth.Controller.js';
 import { authMiddleware } from '../middleware/authMiddler.js';
+import express from 'express';
+import { body } from 'express-validator';
+import { validate } from '../middleware/validate.js';
 
+const router = express.Router();
 
-// @route   POST /api/auth/register
-// @desc    Register user
-router.post('/register', registerUser);
+router.post('/register',
+  [
+    body('name').notEmpty().withMessage('Name is required'),
+    body('email').isEmail().withMessage('Valid email is required'),
+    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+    body('phoneNumber').optional().isMobilePhone().withMessage('Invalid phone number'),
+    body('gender').optional().isIn(['Male', 'Female', 'Other']).withMessage('Invalid gender'),
+  ],
+  validate,
+  registerUser
+);
 
-// @route   POST /api/auth/login
-// @desc    Login user
-router.post('/login', loginUser);
-
-// @ route GET /api/user/profile
+router.post('/login',
+  [
+    body('email').isEmail().withMessage('Valid email is required'),
+    body('password').notEmpty().withMessage('Password is required'),
+  ],
+  validate,
+  loginUser
+);
 router.get('/profile', authMiddleware, getUserProfile);
 
-// @ route PUT /api/user/profile
-router.put('/profile', authMiddleware, updateUserProfile);
+router.put('/profile',
+    authMiddleware,
+    [
+      body('name').optional().isLength({ min: 2 }).withMessage('Name must be at least 2 characters'),
+      body('phoneNumber').optional().isMobilePhone().withMessage('Invalid phone number'),
+      body('gender').optional().isIn(['Male', 'Female', 'Other']).withMessage('Invalid gender'),
+      body('profileImage').optional().isURL().withMessage('Profile image must be a valid URL')
+    ],
+    validate,
+    updateUserProfile
+  );
 
 export default router;
