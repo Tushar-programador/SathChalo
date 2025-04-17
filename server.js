@@ -1,25 +1,29 @@
-import express, { json } from 'express';
-import cors from 'cors';
+
 import connectDB from './config/db.js';
-import authRoutes from './routes/userRoute.js';
 import { Server } from 'socket.io';
+import { app } from './app.js'
 
-const app = express();
 
-// Connect to database
-connectDB();
+let server;
 
-// Middleware
-app.use(json());
-app.use(cors());
+connectDB()
+  .then(() => {
+    console.log("Database connected");
 
-// Routes
-app.use('/api/auth', authRoutes);
+    server = app.on("error", (e) => {
+      console.log("Error in database connection -- ", e);
+      throw e;
+    });
 
-// Create server and Socket.IO
-const server = app.listen(5000, () => {
-  console.log('Server started on port 5000');
-});
+    const port = process.env.PORT || 5000;
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
+  })
+  .catch((err) => {
+    console.log("Error in database connection ", err);
+  });
+
 
 const io = new Server(server);
 io.on('connection', (socket) => {
