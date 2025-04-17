@@ -1,6 +1,8 @@
 import { Router } from 'express';
 const router = Router();
-import { registerUser, loginUser } from '../controllers/auth.Controller.js';
+import { registerUser, loginUser,getUserProfile , updateUserProfile } from '../controllers/auth.Controller.js';
+import { authMiddleware } from '../middleware/authMiddler.js';
+
 
 // @route   POST /api/auth/register
 // @desc    Register user
