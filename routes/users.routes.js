@@ -10,4 +10,10 @@ router.post('/register', registerUser);
 // @desc    Login user
 router.post('/login', loginUser);
 
+// @ route GET /api/user/profile
+router.get('/profile', authMiddleware, getUserProfile);
+
+// @ route PUT /api/user/profile
+router.put('/profile', authMiddleware, updateUserProfile);
+
 export default router;
